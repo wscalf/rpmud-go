@@ -1,4 +1,4 @@
-package core
+package gameplay
 
 type Transition interface {
 	Transition() *TransitionData

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"math/rand"
 	"net"
-	"rpmud/core/contract"
+	"rpmud/gameplay/dependencies"
 	"strings"
 	"testing"
 )
@@ -68,7 +68,7 @@ func TestTelnetAdapterDeclinesUnknownOption(t *testing.T) {
 
 }
 
-func setup() (messages chan string, adapter contract.ClientAdapter, client net.Conn) {
+func setup() (messages chan string, adapter dependencies.Client, client net.Conn) {
 	port := 4000 + rand.Intn(100)
 	listener := TelnetListener{Port: port}
 	adapters, _ := listener.Listen()

@@ -3,15 +3,15 @@ package telnet
 import (
 	"fmt"
 	"net"
-	"rpmud/core/contract"
+	"rpmud/gameplay/dependencies"
 )
 
 type TelnetListener struct {
 	Port int
 }
 
-func (tl TelnetListener) Listen() (chan contract.ClientAdapter, error) {
-	ch := make(chan contract.ClientAdapter)
+func (tl TelnetListener) Listen() (chan dependencies.Client, error) {
+	ch := make(chan dependencies.Client)
 	l, err := net.ListenTCP("tcp", &net.TCPAddr{Port: tl.Port})
 	if err != nil {
 		return nil, err
@@ -21,7 +21,7 @@ func (tl TelnetListener) Listen() (chan contract.ClientAdapter, error) {
 	return ch, nil
 }
 
-func handleConnections(listener *net.TCPListener, ch chan contract.ClientAdapter) {
+func handleConnections(listener *net.TCPListener, ch chan dependencies.Client) {
 	for {
 		c, err := listener.AcceptTCP()
 		if err != nil {

@@ -1,4 +1,4 @@
-package core
+package gameplay
 
 type DirectTransition struct {
 	TransitionData

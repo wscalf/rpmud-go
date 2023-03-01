@@ -1,12 +1,12 @@
-package core
+package gameplay
 
 import (
-	"rpmud/core/contract"
+	"rpmud/gameplay/dependencies"
 )
 
 type Player struct {
 	ObjectData
-	contract.ClientAdapter
+	dependencies.Client
 	Room     *Room
 	commands CommandSystem
 }
@@ -24,10 +24,10 @@ func (p *Player) handleInput() {
 	p.Room.Leave(p)
 }
 
-func CreatePlayer(adapter contract.ClientAdapter, commands CommandSystem, name string) *Player {
+func CreatePlayer(adapter dependencies.Client, commands CommandSystem, name string) *Player {
 	p := Player{}
 	p.Name = name
-	p.ClientAdapter = adapter
+	p.Client = adapter
 	p.commands = commands
 	go p.handleInput()
 	return &p

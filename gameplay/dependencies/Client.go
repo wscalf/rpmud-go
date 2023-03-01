@@ -1,6 +1,6 @@
-package contract
+package dependencies
 
-type ClientAdapter interface {
+type Client interface {
 	Init()
 	MessagesChannel() chan string
 	Write(output string)
