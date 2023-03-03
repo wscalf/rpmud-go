@@ -65,7 +65,7 @@ func (r *Room) FindLink(name string) (*Link, bool) {
 	return nil, false
 }
 
-func CreateRoom(name string, description string) *Room {
+func NewRoom(name string, description string) *Room {
 	r := Room{
 		objects: list.New(),
 		players: list.New(),

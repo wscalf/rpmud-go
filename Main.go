@@ -33,8 +33,8 @@ func doLogin(c dependencies.Client, commands gameplay.CommandSystem, start *game
 }
 
 func createWorld() *gameplay.Room {
-	start := gameplay.CreateRoom("Start Room", "This is the starting room! You made it!")
-	extra := gameplay.CreateRoom("Overflow", "You've reached the overflow room!")
+	start := gameplay.NewRoom("Start Room", "This is the starting room! You made it!")
+	extra := gameplay.NewRoom("Overflow", "You've reached the overflow room!")
 
 	start.LinkTo(extra, "north", "Overflow", "A doorway with a curtain over it and a sign that says 'Overflow'")
 	extra.LinkTo(start, "south", "Start Room", "A doorway with a curtain over it")

@@ -1,6 +1,6 @@
 package gameplay
 
-type Link struct {
+type Link struct { //May evolve back into an interface later with this becoming a HardLink vs a ScriptLink
 	Object
 	Command string
 	to      *Room
