@@ -14,8 +14,9 @@ type HardcodedCommandSystem struct {
 }
 
 func (s *HardcodedCommandSystem) Execute(player *Player, command string) error {
-	room := player.Room
-	if room.TryActivateTransition(player, command) {
+	room := player.Room()
+	if link, hit := room.FindLink(command); hit {
+		link.Activate(player)
 		return nil
 	}
 
@@ -25,12 +26,21 @@ func (s *HardcodedCommandSystem) Execute(player *Player, command string) error {
 		case "look":
 			switch len(words) {
 			case 1:
-				player.Write(room.Describe())
+				player.Send(room.Describe())
 				return nil
 			case 2:
-				o, hit := room.Find(words[1])
+				var o *Object
+				hit := false
+				name := words[1]
+
+				if p, hit := room.FindPlayer(name); hit {
+					o = &p.Object
+				} else if l, hit := room.FindLink(name); hit {
+					o = &l.Object
+				}
+
 				if hit {
-					player.Write(o.Describe())
+					player.Send(o.Describe())
 					return nil
 				} else {
 					return errors.New("Cannot find: " + words[1])

@@ -36,13 +36,13 @@ const (
 
 type TelnetAdapter struct {
 	ch            chan string
-	socket        *net.TCPConn
+	socket        net.Conn
 	sb            *strings.Builder
 	serverOptions map[Option]Status
 	clientOptions map[Option]Status
 }
 
-func createTelnetAdapter(socket *net.TCPConn) TelnetAdapter {
+func createTelnetAdapter(socket net.Conn) TelnetAdapter {
 	adapter := TelnetAdapter{make(chan string), socket, &strings.Builder{}, make(map[Option]Status), make(map[Option]Status)}
 	return adapter
 }

@@ -2,15 +2,17 @@ package telnet
 
 import (
 	"bytes"
-	"fmt"
-	"math/rand"
 	"net"
 	"rpmud/gameplay/dependencies"
 	"strings"
 	"testing"
+
+	"google.golang.org/grpc/test/bufconn"
 )
 
 func TestTelnetAdapterRoundTrip(t *testing.T) {
+	t.Parallel()
+
 	const value = "Test string\r\n"
 	const valueWithoutEOL = "Test string"
 
@@ -46,17 +48,25 @@ func BenchmarkAdapterRoundTrip(b *testing.B) {
 	messages, _, client := setup()
 
 	for i := 0; i < b.N; i++ {
-		client.Write(data)
+		if _, err := client.Write(data); err != nil {
+			b.Error(err)
+		}
+
 		<-messages
 	}
 }
 
 func TestTelnetAdapterDeclinesUnknownOption(t *testing.T) {
+	t.Parallel()
+
 	request := []byte{IAC, WILL, 150}
 	_, _, client := setup()
 
 	buf := make([]byte, 16)
-	client.Write(request)
+	if _, err := client.Write(request); err != nil {
+		t.Error(err)
+	}
+
 	len, err := client.Read(buf)
 	if err != nil {
 		t.Error(err)
@@ -69,11 +79,11 @@ func TestTelnetAdapterDeclinesUnknownOption(t *testing.T) {
 }
 
 func setup() (messages chan string, adapter dependencies.Client, client net.Conn) {
-	port := 4000 + rand.Intn(100)
-	listener := TelnetListener{Port: port}
-	adapters, _ := listener.Listen()
+	buf := bufconn.Listen(2048)
+	listener := TelnetListener{}
+	adapters, _ := listener.Listen(buf)
 
-	client, _ = net.Dial("tcp", fmt.Sprintf("localhost:%d", port))
+	client, _ = buf.Dial()
 
 	adapter = <-adapters
 	messages = adapter.MessagesChannel()

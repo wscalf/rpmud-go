@@ -1,20 +1,15 @@
 package gameplay
 
-type ObjectData struct {
+type Object struct {
 	ID          string
 	Name        string
 	Description string
 }
 
-type Object interface {
-	Object() *ObjectData
-	Describe() string
-}
-
-func (o *ObjectData) Object() *ObjectData {
+func (o *Object) Object() *Object {
 	return o
 }
 
-func (o *ObjectData) Describe() string {
+func (o *Object) Describe() string {
 	return o.Description
 }

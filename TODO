@@ -1,0 +1,36 @@
+To Do:
+
+Tactical:
+Partially revert and generally clean up netcode. The options implementation is really cool, but we don't actually seem to need it.
+
+Set up gitignore (I just accidentally checked in the binary)
+Get set up on the 'hub - maybe as a private repo for now?
+    Need to get set up with a legit kanban board too. I think gitlab has one, does the 'hub?
+        They seem to be roughly equivalent
+
+Generally catch up on tests and try to shift to a test-driven posture
+    Add unit tests around room operations
+    Add unit tests for transition
+    Add unit tests for player operations
+
+Add pose command? Technically, it would put us in good shape as a functioning RP server
+
+Transitions should have messages shown on both sides when used.
+    PCs don't have descs either. And there's no special message shown on connect/disconnect. Maybe this should be deferred to templating, though?
+
+Strategic:
+Prototype using ANTLR in a Go program
+
+Start seriously designing the scripting and templating languages
+    Will need to build out the command system more
+        Account for scriptcommands at a variety of different levels
+        Need command-defined parsing, likely as part of the scripting language
+
+Persistence?
+    Prototype SQLite (is there are newer alternative as an embedded database engine?)
+    Prototype MongoDB
+
+Web client
+    Need to add web hosting to the app
+    Prototype websockets, create websocket ClientAdapter
+    Color and style formatting will have to be handled differently for web than telnet

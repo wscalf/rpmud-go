@@ -7,23 +7,27 @@ import (
 )
 
 type TelnetListener struct {
-	Port int
 }
 
-func (tl TelnetListener) Listen() (chan dependencies.Client, error) {
-	ch := make(chan dependencies.Client)
-	l, err := net.ListenTCP("tcp", &net.TCPAddr{Port: tl.Port})
+func (tl *TelnetListener) ListenTCP(port int) (chan dependencies.Client, error) {
+	l, err := net.ListenTCP("tcp", &net.TCPAddr{Port: port})
 	if err != nil {
 		return nil, err
 	}
 
-	go handleConnections(l, ch)
+	return tl.Listen(l)
+}
+
+func (tl *TelnetListener) Listen(ls net.Listener) (chan dependencies.Client, error) {
+	ch := make(chan dependencies.Client)
+
+	go handleConnections(ls, ch)
 	return ch, nil
 }
 
-func handleConnections(listener *net.TCPListener, ch chan dependencies.Client) {
+func handleConnections(listener net.Listener, ch chan dependencies.Client) {
 	for {
-		c, err := listener.AcceptTCP()
+		c, err := listener.Accept()
 		if err != nil {
 			fmt.Println(err)
 			return

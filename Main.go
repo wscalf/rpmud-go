@@ -8,8 +8,8 @@ import (
 )
 
 func main() {
-	listener := telnet.TelnetListener{Port: 4000}
-	clients, err := listener.Listen()
+	listener := telnet.TelnetListener{}
+	clients, err := listener.ListenTCP(4000)
 	commands := &gameplay.HardcodedCommandSystem{}
 	if err != nil {
 		fmt.Println(err)
@@ -28,8 +28,8 @@ func main() {
 
 func doLogin(c dependencies.Client, commands gameplay.CommandSystem, start *gameplay.Room) {
 	c.Write("Enter player name:")
-	p := gameplay.CreatePlayer(c, commands, <-c.MessagesChannel())
-	start.Join(p)
+	p := gameplay.NewPlayer(c, commands, <-c.MessagesChannel())
+	p.Enter(start)
 }
 
 func createWorld() *gameplay.Room {
