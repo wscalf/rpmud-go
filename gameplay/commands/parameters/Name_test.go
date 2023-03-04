@@ -3,7 +3,7 @@ package parameters
 import (
 	"testing"
 
-	"github.com/magiconair/properties/assert"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNameFindsSingleWordNameAtEndOfInput(t *testing.T) {
@@ -12,7 +12,7 @@ func TestNameFindsSingleWordNameAtEndOfInput(t *testing.T) {
 	n := NewName("param", false)
 	i := n.Find(c)
 
-	assert.Equal(t, i, 0)
+	assert.Equal(t, 0, i)
 
 	v, r := n.Consume(c)
 
@@ -26,7 +26,7 @@ func TestNameFindsSingleWordNameWithRemainingInput(t *testing.T) {
 	n := NewName("param", false)
 	i := n.Find(c)
 
-	assert.Equal(t, i, 0)
+	assert.Equal(t, 0, i)
 
 	v, r := n.Consume(c)
 
@@ -40,7 +40,7 @@ func TestNameFindsQuotedNameAtEndOfInput(t *testing.T) {
 	n := NewName("param", false)
 	i := n.Find(c)
 
-	assert.Equal(t, i, 0)
+	assert.Equal(t, 0, i)
 
 	v, r := n.Consume(c)
 
@@ -54,7 +54,7 @@ func TestNameFindsQuotedNameWithRemainingInput(t *testing.T) {
 	n := NewName("param", false)
 	i := n.Find(c)
 
-	assert.Equal(t, i, 0)
+	assert.Equal(t, 0, i)
 
 	v, r := n.Consume(c)
 
@@ -67,7 +67,7 @@ func TestNameReturnsNotFoundForEmptyInput(t *testing.T) {
 
 	i := n.Find("")
 
-	assert.Equal(t, i, -1)
+	assert.Equal(t, -1, i)
 }
 
 func TestNameReturnsNotFoundForUnbalancedQuotes(t *testing.T) {
@@ -75,5 +75,5 @@ func TestNameReturnsNotFoundForUnbalancedQuotes(t *testing.T) {
 
 	i := n.Find(`"quoted`)
 
-	assert.Equal(t, i, -1)
+	assert.Equal(t, -1, i)
 }
