@@ -35,36 +35,32 @@ const (
 )
 
 type TelnetAdapter struct {
-	ch            chan string
+	inbound       chan string
+	outbound      chan string
 	socket        net.Conn
 	sb            *strings.Builder
 	serverOptions map[Option]Status
 	clientOptions map[Option]Status
 }
 
-func createTelnetAdapter(socket net.Conn) TelnetAdapter {
-	adapter := TelnetAdapter{make(chan string), socket, &strings.Builder{}, make(map[Option]Status), make(map[Option]Status)}
-	return adapter
+func createTelnetAdapter(socket net.Conn) *TelnetAdapter {
+	return &TelnetAdapter{make(chan string), make(chan string), socket, &strings.Builder{}, make(map[Option]Status), make(map[Option]Status)}
 }
 
-func (t TelnetAdapter) Init() {
+func (t *TelnetAdapter) Init() {
 	go t.handleInput()
+	go t.handleOutput()
 }
 
-func (t TelnetAdapter) Write(output string) {
-	t.socket.Write([]byte(output))
-	t.sendCommand(CR, LF, IAC, GA)
-}
-
-func (t TelnetAdapter) sendCommand(bytes ...byte) {
+func (t *TelnetAdapter) sendCommand(bytes ...byte) {
 	t.socket.Write(bytes)
 }
 
-func (t TelnetAdapter) MessagesChannel() chan string {
-	return t.ch
+func (t *TelnetAdapter) IOChannels() (chan string, chan string) {
+	return t.inbound, t.outbound
 }
 
-func (t TelnetAdapter) handleBuffer(data []byte) {
+func (t *TelnetAdapter) handleBuffer(data []byte) {
 	start := 0
 
 	for i := 0; i < len(data); i++ {
@@ -76,10 +72,10 @@ func (t TelnetAdapter) handleBuffer(data []byte) {
 			start = i
 		case CR: //Not checking for the LF for now
 			if t.sb.Len() == 0 {
-				t.ch <- string(data[start:i])
+				t.inbound <- string(data[start:i])
 			} else {
 				t.sb.Write(data[start:i])
-				t.ch <- t.sb.String()
+				t.inbound <- t.sb.String()
 				t.sb.Reset()
 			}
 			i += 2 //Skip CRLF
@@ -92,17 +88,17 @@ func (t TelnetAdapter) handleBuffer(data []byte) {
 	}
 }
 
-func (t TelnetAdapter) requestServerOption(option Option) {
+func (t *TelnetAdapter) requestServerOption(option Option) {
 	t.serverOptions[option] = Enabling
 	t.sendCommand(IAC, WILL, byte(option))
 }
 
-func (t TelnetAdapter) requestClientOption(option Option) {
+func (t *TelnetAdapter) requestClientOption(option Option) {
 	t.clientOptions[option] = Enabling
 	t.sendCommand(IAC, DO, byte(option))
 }
 
-func (t TelnetAdapter) handleCommand(data []byte) int {
+func (t *TelnetAdapter) handleCommand(data []byte) int {
 	//Process the command and return the number of bytes consumed
 	switch data[1] {
 	case DO, DONT, WILL, WONT:
@@ -114,7 +110,7 @@ func (t TelnetAdapter) handleCommand(data []byte) int {
 	return 0
 }
 
-func (t TelnetAdapter) handleOptionCommand(command byte, option Option) {
+func (t *TelnetAdapter) handleOptionCommand(command byte, option Option) {
 	fmt.Printf("Received option command: %d %d\n", option, command)
 	switch command {
 	case DO:
@@ -159,9 +155,9 @@ func (t TelnetAdapter) handleOptionCommand(command byte, option Option) {
 	}
 }
 
-func (t TelnetAdapter) handleInput() {
+func (t *TelnetAdapter) handleInput() {
 	defer t.socket.Close()
-	defer close(t.ch)
+	defer close(t.inbound)
 
 	buffer := make([]byte, 1024)
 
@@ -173,5 +169,12 @@ func (t TelnetAdapter) handleInput() {
 		}
 
 		t.handleBuffer(buffer[:len])
+	}
+}
+
+func (t *TelnetAdapter) handleOutput() {
+	for message := range t.outbound {
+		t.socket.Write([]byte(message))
+		t.sendCommand(CR, LF, IAC, GA)
 	}
 }

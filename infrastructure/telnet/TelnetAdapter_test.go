@@ -16,20 +16,20 @@ func TestTelnetAdapterRoundTrip(t *testing.T) {
 	const value = "Test string\r\n"
 	const valueWithoutEOL = "Test string"
 
-	messages, adapter, client := setup()
+	inbound, outbound, _, client := setup()
 
 	_, err := client.Write([]byte(value))
 	if err != nil {
 		t.Error(err)
 	}
 
-	received := <-messages
+	received := <-inbound
 
 	if received != valueWithoutEOL {
 		t.Fatalf("Expected %s but got %s", value, received)
 	}
 
-	adapter.Write(received)
+	outbound <- received
 
 	receiveBuffer := make([]byte, 16)
 	i, err := client.Read(receiveBuffer)
@@ -45,14 +45,14 @@ func TestTelnetAdapterRoundTrip(t *testing.T) {
 
 func BenchmarkAdapterRoundTrip(b *testing.B) {
 	data := []byte("look Basket\r\n")
-	messages, _, client := setup()
+	inbound, _, _, client := setup()
 
 	for i := 0; i < b.N; i++ {
 		if _, err := client.Write(data); err != nil {
 			b.Error(err)
 		}
 
-		<-messages
+		<-inbound
 	}
 }
 
@@ -60,7 +60,7 @@ func TestTelnetAdapterDeclinesUnknownOption(t *testing.T) {
 	t.Parallel()
 
 	request := []byte{IAC, WILL, 150}
-	_, _, client := setup()
+	_, _, _, client := setup()
 
 	buf := make([]byte, 16)
 	if _, err := client.Write(request); err != nil {
@@ -78,7 +78,7 @@ func TestTelnetAdapterDeclinesUnknownOption(t *testing.T) {
 
 }
 
-func setup() (messages chan string, adapter dependencies.Client, client net.Conn) {
+func setup() (inbound chan string, outbound chan string, adapter dependencies.Client, client net.Conn) {
 	buf := bufconn.Listen(2048)
 	listener := TelnetListener{}
 	adapters, _ := listener.Listen(buf)
@@ -86,7 +86,7 @@ func setup() (messages chan string, adapter dependencies.Client, client net.Conn
 	client, _ = buf.Dial()
 
 	adapter = <-adapters
-	messages = adapter.MessagesChannel()
+	inbound, outbound = adapter.IOChannels()
 
 	return
 }

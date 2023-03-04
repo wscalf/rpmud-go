@@ -1,4 +1,4 @@
-package gameplay
+package world
 
 type Object struct {
 	ID          string

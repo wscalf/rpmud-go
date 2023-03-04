@@ -1,4 +1,4 @@
-package gameplay
+package world
 
 import (
 	"container/list"

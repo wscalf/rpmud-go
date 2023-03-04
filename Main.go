@@ -3,38 +3,35 @@ package main
 import (
 	"fmt"
 	"rpmud/gameplay"
-	"rpmud/gameplay/dependencies"
+	"rpmud/gameplay/commands"
+	"rpmud/gameplay/world"
 	"rpmud/infrastructure/telnet"
 )
 
 func main() {
 	listener := telnet.TelnetListener{}
 	clients, err := listener.ListenTCP(4000)
-	commands := &gameplay.HardcodedCommandSystem{}
+
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	start := createWorld()
+	interpreter := commands.NewInterpreter()
+	game := gameplay.NewGame(createWorld(), interpreter)
+	game.Start()
 
 	fmt.Println("Server up and listening")
 
 	for {
 		c := <-clients
-		go doLogin(c, commands, start)
+		go game.Join(c)
 	}
 }
 
-func doLogin(c dependencies.Client, commands gameplay.CommandSystem, start *gameplay.Room) {
-	c.Write("Enter player name:")
-	p := gameplay.NewPlayer(c, commands, <-c.MessagesChannel())
-	p.Enter(start)
-}
-
-func createWorld() *gameplay.Room {
-	start := gameplay.NewRoom("Start Room", "This is the starting room! You made it!")
-	extra := gameplay.NewRoom("Overflow", "You've reached the overflow room!")
+func createWorld() *world.Room {
+	start := world.NewRoom("Start Room", "This is the starting room! You made it!")
+	extra := world.NewRoom("Overflow", "You've reached the overflow room!")
 
 	start.LinkTo(extra, "north", "Overflow", "A doorway with a curtain over it and a sign that says 'Overflow'")
 	extra.LinkTo(start, "south", "Start Room", "A doorway with a curtain over it")

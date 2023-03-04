@@ -1,4 +1,4 @@
-package gameplay
+package world
 
 import (
 	"rpmud/gameplay/dependencies"
@@ -7,8 +7,10 @@ import (
 type Player struct {
 	Object
 	client   dependencies.Client
+	inbound  chan string
+	outbound chan string
+	onInput  func(*Player, *Room, string)
 	room     *Room
-	commands CommandSystem
 }
 
 func (p *Player) Room() *Room {
@@ -26,27 +28,27 @@ func (p *Player) Leave() {
 }
 
 func (p *Player) Send(message string) {
-	p.client.Write(message)
+	if p.outbound != nil {
+		p.outbound <- message
+	}
 }
 
 func (p *Player) handleInput() {
-	ch := p.client.MessagesChannel()
-
-	for input := range ch {
-		err := p.commands.Execute(p, input)
-		if err != nil {
-			p.client.Write(err.Error()) //Should probably distinguish between input errors and server errors, server errors should definitely be logged and probably not sent to the client
-		}
+	for input := range p.inbound {
+		p.onInput(p, p.room, input)
 	}
+	close(p.outbound)
+	p.outbound = nil
 	//When we get here, the peer is disconnected
 	p.Leave()
 }
 
-func NewPlayer(client dependencies.Client, commands CommandSystem, name string) *Player {
+func NewPlayer(client dependencies.Client, onInput func(*Player, *Room, string), name string) *Player {
 	p := Player{}
 	p.Name = name
 	p.client = client
-	p.commands = commands
+	p.onInput = onInput
+	p.inbound, p.outbound = client.IOChannels()
 	go p.handleInput()
 	return &p
 }

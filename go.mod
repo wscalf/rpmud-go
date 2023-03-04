@@ -2,4 +2,7 @@ module rpmud
 
 go 1.18
 
-require google.golang.org/grpc v1.53.0
+require (
+	github.com/magiconair/properties v1.8.7
+	google.golang.org/grpc v1.53.0
+)
