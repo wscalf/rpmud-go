@@ -1,9 +1,9 @@
 package gameplay
 
 import (
-	"rpmud/gameplay/commands"
-	"rpmud/gameplay/dependencies"
-	"rpmud/gameplay/world"
+	"rpmud/server/gameplay/commands"
+	"rpmud/server/gameplay/dependencies"
+	"rpmud/server/gameplay/world"
 )
 
 type Game struct {

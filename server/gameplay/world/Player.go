@@ -1,7 +1,7 @@
 package world
 
 import (
-	"rpmud/gameplay/dependencies"
+	"rpmud/server/gameplay/dependencies"
 )
 
 type Player struct {

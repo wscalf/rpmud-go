@@ -3,7 +3,7 @@ package telnet
 import (
 	"fmt"
 	"net"
-	"rpmud/gameplay/dependencies"
+	"rpmud/server/gameplay/dependencies"
 )
 
 type TelnetListener struct {

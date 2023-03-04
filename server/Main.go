@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
-	"rpmud/gameplay"
-	"rpmud/gameplay/commands"
-	"rpmud/gameplay/world"
-	"rpmud/infrastructure/telnet"
+	"rpmud/server/gameplay"
+	"rpmud/server/gameplay/commands"
+	"rpmud/server/gameplay/world"
+	"rpmud/server/infrastructure/telnet"
 )
 
 func main() {

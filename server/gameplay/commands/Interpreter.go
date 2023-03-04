@@ -2,9 +2,9 @@ package commands
 
 import (
 	"fmt"
-	"rpmud/gameplay/commands/builtin"
-	"rpmud/gameplay/commands/parameters"
-	"rpmud/gameplay/world"
+	"rpmud/server/gameplay/commands/builtin"
+	"rpmud/server/gameplay/commands/parameters"
+	"rpmud/server/gameplay/world"
 	"strings"
 )
 

@@ -1,10 +1,10 @@
 package commands
 
 import (
-	"rpmud/gameplay/commands/builtin"
-	"rpmud/gameplay/commands/parameters"
-	"rpmud/gameplay/world"
-	"rpmud/infrastructure"
+	"rpmud/server/gameplay/commands/builtin"
+	"rpmud/server/gameplay/commands/parameters"
+	"rpmud/server/gameplay/world"
+	"rpmud/server/infrastructure"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

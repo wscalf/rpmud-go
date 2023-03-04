@@ -2,8 +2,8 @@ package builtin
 
 import (
 	"fmt"
-	"rpmud/gameplay/commands/parameters"
-	"rpmud/gameplay/world"
+	"rpmud/server/gameplay/commands/parameters"
+	"rpmud/server/gameplay/world"
 )
 
 type Look struct {

@@ -1,8 +1,8 @@
 package commands
 
 import (
-	"rpmud/gameplay/commands/parameters"
-	"rpmud/gameplay/world"
+	"rpmud/server/gameplay/commands/parameters"
+	"rpmud/server/gameplay/world"
 )
 
 type Job interface {

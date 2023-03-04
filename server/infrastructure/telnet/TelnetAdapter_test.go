@@ -3,7 +3,7 @@ package telnet
 import (
 	"bytes"
 	"net"
-	"rpmud/gameplay/dependencies"
+	"rpmud/server/gameplay/dependencies"
 	"strings"
 	"testing"
 
