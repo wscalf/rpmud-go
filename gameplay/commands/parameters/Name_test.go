@@ -16,8 +16,8 @@ func TestNameFindsSingleWordNameAtEndOfInput(t *testing.T) {
 
 	v, r := n.Consume(c)
 
-	assert.Equal(t, v.Single(), c)
-	assert.Equal(t, r, "")
+	assert.Equal(t, c, v.Single())
+	assert.Equal(t, "", r)
 }
 
 func TestNameFindsSingleWordNameWithRemainingInput(t *testing.T) {
@@ -30,8 +30,8 @@ func TestNameFindsSingleWordNameWithRemainingInput(t *testing.T) {
 
 	v, r := n.Consume(c)
 
-	assert.Equal(t, v.Single(), "value")
-	assert.Equal(t, r, "more")
+	assert.Equal(t, "value", v.Single())
+	assert.Equal(t, "more", r)
 }
 
 func TestNameFindsQuotedNameAtEndOfInput(t *testing.T) {
@@ -44,8 +44,8 @@ func TestNameFindsQuotedNameAtEndOfInput(t *testing.T) {
 
 	v, r := n.Consume(c)
 
-	assert.Equal(t, v.Single(), "quoted name")
-	assert.Equal(t, r, "")
+	assert.Equal(t, "quoted name", v.Single())
+	assert.Equal(t, "", r)
 }
 
 func TestNameFindsQuotedNameWithRemainingInput(t *testing.T) {
@@ -58,8 +58,8 @@ func TestNameFindsQuotedNameWithRemainingInput(t *testing.T) {
 
 	v, r := n.Consume(c)
 
-	assert.Equal(t, v.Single(), "quoted name")
-	assert.Equal(t, r, "more")
+	assert.Equal(t, "quoted name", v.Single())
+	assert.Equal(t, "more", r)
 }
 
 func TestNameReturnsNotFoundForEmptyInput(t *testing.T) {
