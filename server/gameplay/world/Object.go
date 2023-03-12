@@ -1,9 +1,12 @@
 package world
 
+import "rpmud/server/gameplay/dependencies"
+
 type Object struct {
 	ID          string
 	Name        string
 	Description string
+	Script      *dependencies.ScriptObject
 }
 
 func (o *Object) Object() *Object {
